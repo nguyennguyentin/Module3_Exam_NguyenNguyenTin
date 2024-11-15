@@ -11,8 +11,10 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "PhongTroServlet", value = "")
 public class PhongTroServlet extends HttpServlet {
@@ -68,11 +70,51 @@ public class PhongTroServlet extends HttpServlet {
             action = "";
         }
         switch (action) {
-            case "create_product":
+            case "create":
                 createProduct(request,response);
+                break;
+            case "delete":
+                delete(request,response);
+                break;
+            case "search":
+                search(request,response);
                 break;
     }
 }
+
+    private void search(HttpServletRequest request, HttpServletResponse response) {
+        String keyword = request.getParameter("keyword");
+
+        List<PhongTro> phongTroList = phongTroRepository.search(keyword);
+        request.setAttribute("phongTroList",phongTroList);
+        try {
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();        }
+    }
+
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) {
+        String[] selectDeleteIdList = request.getParameterValues("selectDeleteIdList");
+        if (selectDeleteIdList != null) {
+            // Chuyển đổi danh sách ID từ String sang Integer
+            List<Integer> idsToDelete = Arrays.stream(selectDeleteIdList)
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+
+            // Gọi phương thức xóa hàng loạt trong repository
+            phongTroRepository.deleteBatch(idsToDelete);
+        }
+
+        try {
+            response.sendRedirect("/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private void createProduct(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
@@ -84,9 +126,13 @@ public class PhongTroServlet extends HttpServlet {
         String ghiChu = request.getParameter("ghiChu");
         PhongTro phongTro = new PhongTro(name, sdt,ngayThue,hinhThuc,ghiChu);
         phongTro.setHinhThuc(hinhThuc);
+        System.out.println("Name: " + name);
+        System.out.println("SDT: " + sdt);
+        System.out.println("Ngay Thue: " + ngayThue);
+        System.out.println("Ghi Chu: " + ghiChu);
         phongTroRepository.save(phongTro);
         try {
-            response.sendRedirect("");
+            response.sendRedirect("/");
         } catch (IOException e) {
             e.printStackTrace();
         }

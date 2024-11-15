@@ -24,6 +24,11 @@ public class PhongTro {
     }
 
     public PhongTro(String name, String sdt, Date ngayThue, HinhThuc hinhThuc, String ghiChu) {
+        this.name = name;
+        this.sdt = sdt;
+        this.ngayThue = ngayThue;
+        this.hinhThuc = hinhThuc;
+        this.ghiChu = ghiChu;
     }
 
     public int getId_phong() {
@@ -72,5 +77,21 @@ public class PhongTro {
 
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    @Override
+    public String toString() {
+        return "PhongTro{" +
+                ", name='" + name + '\'' +
+                ", sdt='" + sdt + '\'' +
+                ", ngayThue=" + ngayThue +
+                ", hinhThuc=" + hinhThuc +
+                ", ghiChu='" + ghiChu + '\'' +
+                '}';
+    }
+
+    // Phương thức để lấy mã phòng trọ dạng "PT-001"
+    public String getMaPhongTroFormatted() {
+        return String.format("PT-%03d", id_phong);
     }
 }

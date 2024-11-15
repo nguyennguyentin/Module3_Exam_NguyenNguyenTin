@@ -7,5 +7,7 @@ import java.util.List;
 public interface IPhongTroRepository {
     List<PhongTro> findAll();
     void save(PhongTro phongTro);
+    void deleteBatch(List<Integer> deleteIdList);
+    List<PhongTro> search(String keyword);
 
 }
